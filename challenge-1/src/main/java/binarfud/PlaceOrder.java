@@ -136,8 +136,8 @@ public class PlaceOrder {
         switch (number){
             case 1:
                 if (order.keySet().toArray().length < 1) {
-                    this.state = "menu";
                     System.out.println("Silahkan masukkan pesanan terlebih dahulu");
+                    this.state = "menu";
                     return;
                 }
                 this.state = "invoice";
