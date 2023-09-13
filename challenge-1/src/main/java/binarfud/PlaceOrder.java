@@ -46,9 +46,8 @@ public class PlaceOrder {
                         printConfirmation();
                         break;
                     case "invoice":
-                        // printInvoice();
                         System.out.print(getInvoice());
-                        saveToFile();
+                        saveInvoiceToFile();
                         break;
                     case "exit":
                         this.orderIsFinished = true;
@@ -194,7 +193,7 @@ public class PlaceOrder {
 
     }
 
-    void saveToFile() throws IOException {
+    void saveInvoiceToFile() throws IOException {
         boolean isAppend = false;
         FileWriter writer = new FileWriter(this.savePath, isAppend);
         PrintWriter printLine = new PrintWriter(writer);
