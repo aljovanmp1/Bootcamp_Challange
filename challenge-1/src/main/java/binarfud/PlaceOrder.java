@@ -30,6 +30,7 @@ public class PlaceOrder {
         };
 
         this.order = new LinkedHashMap<String, Integer>();
+        System.out.println();
     }
 
     void receivedOrder() {
