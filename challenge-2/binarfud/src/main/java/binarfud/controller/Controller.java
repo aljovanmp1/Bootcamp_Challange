@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import binarfud.model.Menu;
 import binarfud.view.View;
+import binarfud.utlis.WrongInputException;
 
 public class Controller {
     String state;
@@ -28,8 +29,8 @@ public class Controller {
     }
 
     public void receivedOrder() {
-        try {
-            while (!this.orderIsFinished) {
+        while (!this.orderIsFinished) {
+            try {
                 switch (this.state) {
                     case "menu":
                         pickMenu();
@@ -48,43 +49,44 @@ public class Controller {
                         this.orderIsFinished = true;
                         break;
                 }
-            }
 
-        } catch (IOException e) {
-            System.out.println("Something went wrong: " + e.getMessage());
+            } catch (IOException e) {
+                System.out.println("Something went wrong: " + e.getMessage());
+            } catch (WrongInputException e) {
+                loop: while (true) {
+                    System.out.print("=> ");
+                    String inp = input.nextLine();
+                    switch (inp) {
+                        case "n":
+                            this.state = "exit";
+                            break loop;
+                        case "Y":
+                            break loop;
+                        default:
+                            view.printError("wrongInput");
+                            continue;
+                    }
+                }
+            }
         }
     }
 
-    private void pickMenu() {
+    private void pickMenu() throws WrongInputException {
         view.printMenu(menuList);
-        boolean dataInputIsCorrect = true;
+
         while (true) {
             System.out.print("=> ");
             String inp = input.nextLine();
 
-            if (!dataInputIsCorrect) {
-                switch (inp) {
-                    case "n":
-                        this.state = "exit";
-                        return;
-                    case "Y":
-                        dataInputIsCorrect = true;
-                        view.printMenu(menuList);
-                        continue;
-                    default:
-                        view.printError("wrongInput");
-                        continue;
-                }
-            }
             inp = handleIntInput(inp);
 
             String inpBuf = inp;
             int menuListLength = menuList.keySet().toArray().length;
 
-            if (inp.equals("100")) inp = "-1";
+            if (inp.equals("100"))
+                inp = "-1";
             if (inp != "-1" && Integer.parseInt(inp) <= menuListLength && !inp.equals("0"))
                 inp = "100";
-
 
             switch (inp) {
                 case "0":
@@ -99,36 +101,17 @@ public class Controller {
                     return;
                 default:
                     view.printError("wrongInput");
-                    dataInputIsCorrect = false;
-                    continue;
+                    throw new WrongInputException("Wrong Input");
             }
 
         }
     }
 
-    private void pickQuantity() {
+    private void pickQuantity() throws WrongInputException  {
         view.printSelectedMenu(this.selectedMenu);
-
-        boolean dataInputIsCorrect = true;
-
         while (true) {
-            System.out.print(dataInputIsCorrect? "qty => ": "=> ");
+            System.out.print("qty => ");
             String inp = input.nextLine();
-
-            if (!dataInputIsCorrect) {
-                switch (inp) {
-                    case "n":
-                        this.state = "exit";
-                        return;
-                    case "Y":
-                        dataInputIsCorrect = true;
-                        view.printSelectedMenu(this.selectedMenu);
-                        continue;
-                    default:
-                        view.printError("wrongInput");
-                        continue;
-                }
-            }
 
             inp = handleIntInput(inp);
 
@@ -138,8 +121,7 @@ public class Controller {
                     return;
                 case "-1":
                     view.printError("wrongInput");
-                    dataInputIsCorrect = false;
-                    continue;
+                    throw new WrongInputException("Wrong Input");
                 default:
                     this.orderQty.put(selectedMenu.getId(), Integer.parseInt(inp));
                     this.state = "menu";
@@ -148,28 +130,12 @@ public class Controller {
         }
     }
 
-    private void pickConfirmation() {
+    private void pickConfirmation() throws WrongInputException {
         view.printConfirmation(orderQty, menuList);
 
-        boolean dataInputIsCorrect = true;
         while (true) {
             System.out.print("=> ");
             String inp = input.nextLine();
-
-            if (!dataInputIsCorrect) {
-                switch (inp) {
-                    case "n":
-                        this.state = "exit";
-                        return;
-                    case "Y":
-                        dataInputIsCorrect = true;
-                        view.printConfirmation(orderQty, menuList);
-                        continue;
-                    default:
-                        view.printError("wrongInput");
-                        continue;
-                }
-            }
 
             switch (inp) {
                 case "1":
@@ -188,8 +154,7 @@ public class Controller {
                     return;
                 default:
                     view.printError("wrongInput");
-                    dataInputIsCorrect = false;
-                    continue;
+                    throw new WrongInputException("Wrong Input");
             }
         }
     }
