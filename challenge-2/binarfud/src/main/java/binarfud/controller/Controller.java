@@ -25,12 +25,13 @@ public class Controller {
     private View view;
 
     private StruckService struckService;
+    private OrderService orderService;
 
     public void menu(){
         this.view = new View();
         
         this.struckService = new StruckService();
-        OrderService orderService = new OrderService();
+        this.orderService = new OrderService();
         MenuService menuService = new MenuService();
 
         this.orderQty = orderService.getOrderQty();
@@ -143,7 +144,7 @@ public class Controller {
                     view.printError(Constants.WRONGINPUT);
                     throw new WrongInputException(Constants.ERR_WRONGINPUT);
                 default:
-                    this.orderQty.put(selectedMenu.getId(), Integer.parseInt(inp));
+                    this.orderService.addOrder(selectedMenu.getId(), Integer.parseInt(inp));
                     this.state = "menu";
                     return;
             }
