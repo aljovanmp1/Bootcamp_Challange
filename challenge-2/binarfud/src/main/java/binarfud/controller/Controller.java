@@ -1,34 +1,46 @@
 package binarfud.controller;
 
 import java.util.LinkedHashMap;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.Scanner;
+import lombok.NoArgsConstructor;
 
 import binarfud.model.Menu;
 import binarfud.view.View;
 import binarfud.utlis.WrongInputException;
+import binarfud.utlis.Constants;
+import binarfud.service.StruckService;
+import binarfud.service.MenuService;
+import binarfud.service.OrderService;
 
+@NoArgsConstructor
 public class Controller {
     String state;
     boolean orderIsFinished = false;
     Menu selectedMenu;
-    String savePath = "./struk.txt";
-
+    
     Scanner input = new Scanner(System.in);
     private LinkedHashMap<Integer, Menu> menuList;
     private LinkedHashMap<Integer, Integer> orderQty;
     private View view;
 
-    public Controller(View view, LinkedHashMap<Integer, Integer> orderQty, LinkedHashMap<Integer, Menu> menuList) {
-        this.view = view;
-        this.orderQty = orderQty;
-        this.menuList = menuList;
+    private StruckService struckService;
+
+    public void menu(){
+        this.view = new View();
+        
+        this.struckService = new StruckService();
+        OrderService orderService = new OrderService();
+        MenuService menuService = new MenuService();
+
+        this.orderQty = orderService.getOrderQty();
+        this.menuList = menuService.getMenuList();
         this.state = "menu";
+
+        selectMenu();
     }
 
-    public void receivedOrder() {
+    public void selectMenu() {
         while (!this.orderIsFinished) {
             try {
                 switch (this.state) {
@@ -42,28 +54,36 @@ public class Controller {
                         pickConfirmation();
                         break;
                     case "invoice":
-                        System.out.print(getInvoice());
-                        saveInvoiceToFile();
+                        String invoice = struckService.getInvoice(orderQty, menuList);
+                        System.out.print(invoice);
+                        struckService.saveInvoiceToFile(invoice);
+                        this.state = "exit";
                         break;
                     case "exit":
                         this.orderIsFinished = true;
                         break;
+                    default:
+                        this.orderIsFinished = true;
                 }
 
             } catch (IOException e) {
                 System.out.println("Something went wrong: " + e.getMessage());
+
             } catch (WrongInputException e) {
-                loop: while (true) {
+                boolean isStillWrong = true;
+                while (isStillWrong) {
                     System.out.print("=> ");
                     String inp = input.nextLine();
                     switch (inp) {
                         case "n":
                             this.state = "exit";
-                            break loop;
+                            isStillWrong = false;
+                            break;
                         case "Y":
-                            break loop;
+                            isStillWrong = false;
+                            break;
                         default:
-                            view.printError("wrongInput");
+                            view.printError(Constants.WRONGINPUT);
                             continue;
                     }
                 }
@@ -100,8 +120,8 @@ public class Controller {
                     this.state = "confirmation";
                     return;
                 default:
-                    view.printError("wrongInput");
-                    throw new WrongInputException("Wrong Input");
+                    view.printError(Constants.WRONGINPUT);
+                    throw new WrongInputException(Constants.ERR_WRONGINPUT);
             }
 
         }
@@ -120,8 +140,8 @@ public class Controller {
                     this.state = "menu";
                     return;
                 case "-1":
-                    view.printError("wrongInput");
-                    throw new WrongInputException("Wrong Input");
+                    view.printError(Constants.WRONGINPUT);
+                    throw new WrongInputException(Constants.ERR_WRONGINPUT);
                 default:
                     this.orderQty.put(selectedMenu.getId(), Integer.parseInt(inp));
                     this.state = "menu";
@@ -153,42 +173,12 @@ public class Controller {
                     this.state = "exit";
                     return;
                 default:
-                    view.printError("wrongInput");
-                    throw new WrongInputException("Wrong Input");
+                    view.printError(Constants.WRONGINPUT);
+                    throw new WrongInputException(Constants.ERR_WRONGINPUT);
             }
         }
     }
 
-    private String getInvoice() {
-        String result = "";
-        result += view.determineHeaderContent("BinarFud");
-
-        result += "Terima kasih sudah memesan\n";
-        result += "di BinarFud\n\n";
-
-        result += "Dibawah ini adalah pesanan anda\n";
-
-        result += view.formatOrderConfirmation(orderQty, menuList);
-        result += "\nPembayaran : BinarCash\n";
-
-        result += "\n========================\n";
-        result += "Simpan struk ini sebagai\n";
-        result += "bukti pembayaran\n";
-        result += "========================\n\n";
-
-        this.state = "exit";
-        return result;
-
-    }
-
-    private void saveInvoiceToFile() throws IOException {
-        boolean isAppend = false;
-        FileWriter writer = new FileWriter(this.savePath, isAppend);
-        PrintWriter printLine = new PrintWriter(writer);
-
-        printLine.print(getInvoice());
-        printLine.close();
-    }
 
     private String handleIntInput(String inp) {
         try {

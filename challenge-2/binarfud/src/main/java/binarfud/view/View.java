@@ -1,14 +1,15 @@
 package binarfud.view;
 
-import java.util.LinkedHashMap;
+import java.util.Map;
 import lombok.NoArgsConstructor;
 
 import binarfud.model.Menu;
+import binarfud.utlis.Constants;
 
 @NoArgsConstructor
 public class View {
 
-    public void printMenu(LinkedHashMap<Integer, Menu> menuList){
+    public void printMenu(Map<Integer, Menu> menuList){
         printHeader("menu");
         int ind = 1;
         System.out.println("Silahkan pilih makanan : ");
@@ -30,7 +31,7 @@ public class View {
         System.out.println();
     }
 
-    public void printConfirmation(LinkedHashMap<Integer, Integer> orderQty, LinkedHashMap<Integer, Menu> menuList){
+    public void printConfirmation(Map<Integer, Integer> orderQty, Map<Integer, Menu> menuList){
         printHeader("confirmation");
         System.out.print(formatOrderConfirmation(orderQty, menuList));
 
@@ -41,14 +42,20 @@ public class View {
         System.out.println();
     }
 
-    public String formatOrderConfirmation(LinkedHashMap<Integer, Integer> orderQty, LinkedHashMap<Integer, Menu> menuList) {
+    public static String formatOrderConfirmation(Map<Integer, Integer> orderQty, Map<Integer, Menu> menuList) {
         String result = "";
         int totalItem = 0;
         int totalPrice = 0;
 
         for (Integer key : orderQty.keySet()) {
-            result += String.format("%-14s %-5s %s.000 %n", menuList.get(key).getName(), orderQty.get(key),
-                    (orderQty.get(key) * menuList.get(key).getPrice()) / 1000);
+            String resultFormat = "%-14s %-5s %s.000 %n";
+
+            String menuName = menuList.get(key).getName();
+            Integer qty = orderQty.get(key);
+            Integer price = qty * menuList.get(key).getPrice() / 1000;
+
+            result += String.format(resultFormat, menuName, qty, price);
+
             totalItem += orderQty.get(key);
             totalPrice += orderQty.get(key) * menuList.get(key).getPrice();
         }
@@ -73,15 +80,17 @@ public class View {
             case "invoice":
                 System.out.print(determineHeaderContent("BinarFud"));
                 break;
+            default:
+                break;
         }
     }
 
-    public String determineHeaderContent(String sentence) {
+    public static String determineHeaderContent(String sentence) {
         String result = "";
-        result += '\n';
-        result += "========================\n";
-        result += sentence + '\n';
-        result += "========================\n\n";
+        result += Constants.NEWLINE;
+        result += Constants.LINEWITHBREAK;
+        result += sentence + Constants.NEWLINE;
+        result += Constants.LINEWITHBREAK + Constants.NEWLINE;
         return result;
     }
 
@@ -89,24 +98,26 @@ public class View {
         String sentence = "";
         String footer = "";
         switch(state) {
-            case "wrongInput":
+            case Constants.WRONGINPUT:
                 sentence+= "Mohon masukkan input\n";
                 sentence+= "pilihan anda";
                 footer+= "(Y) untuk lanjut\n";
                 footer+= "(n) untuk keluar";
                 break;
-            case "emptyOrder":
+            case Constants.EMPTYORDER:
                 sentence+= "Minimal 1 jumlah\n";
                 sentence+= "pesanan!";
+                break;
+            default:
                 break;
         }
 
         String result = "";
-        result += '\n';
-        result += "========================\n";
-        result += sentence + '\n';
-        result += "========================\n";
-        result += footer + "\n";
+        result += Constants.NEWLINE;
+        result += Constants.LINEWITHBREAK;
+        result += sentence + Constants.NEWLINE;
+        result += Constants.LINEWITHBREAK;
+        result += footer + Constants.NEWLINE;
         
         System.out.print(result);
     }
