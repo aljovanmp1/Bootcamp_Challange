@@ -13,9 +13,8 @@ public class View {
         printHeader("menu");
         int ind = 1;
         System.out.println("Silahkan pilih makanan : ");
-        for (Integer key : menuList.keySet()) {
-            Menu menu = menuList.get(key);
-
+        for (Map.Entry<Integer, Menu> entry : menuList.entrySet()) {
+            Menu menu = entry.getValue();
             System.out.printf("%d. %-13s| %d.000%n", ind, menu.getName(), menu.getPrice() / 1000);
             ind++;
         }
@@ -47,19 +46,22 @@ public class View {
         int totalItem = 0;
         int totalPrice = 0;
 
-        for (Integer key : orderQty.keySet()) {
-            String resultFormat = "%-14s %-5s %s.000 %n";
-
+        StringBuilder bld = new StringBuilder();
+        for (Map.Entry<Integer, Integer> entry : orderQty.entrySet()) {
+            
+            Integer key = entry.getKey();
+            Integer qty = entry.getValue();
             String menuName = menuList.get(key).getName();
-            Integer qty = orderQty.get(key);
+            
             Integer price = qty * menuList.get(key).getPrice() / 1000;
-
-            result += String.format(resultFormat, menuName, qty, price);
+            String resultFormat = "%-14s %-5s %s.000 %n";
+            
+            bld.append(String.format(resultFormat, menuName, qty, price));
 
             totalItem += orderQty.get(key);
             totalPrice += orderQty.get(key) * menuList.get(key).getPrice();
         }
-
+        result+= bld.toString();
         result += "----------------------------+\n";
         result += String.format("%-14s %-5s %s.000 %n", "Total", totalItem, (totalPrice) / 1000);
 

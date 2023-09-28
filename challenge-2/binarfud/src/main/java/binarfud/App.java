@@ -1,7 +1,5 @@
 package binarfud;
 
-import java.util.LinkedHashMap;
-
 import binarfud.service.AppService;
 
 public class App {

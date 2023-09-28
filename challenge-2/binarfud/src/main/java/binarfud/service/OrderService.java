@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class OrderService {
-    private @Getter LinkedHashMap<Integer, Integer> orderQty =  new LinkedHashMap<Integer, Integer>();
+    private @Getter LinkedHashMap<Integer, Integer> orderQty =  new LinkedHashMap<>();
 
     public void addOrder(Integer menuId, Integer qty) {
         orderQty.put(menuId, qty);

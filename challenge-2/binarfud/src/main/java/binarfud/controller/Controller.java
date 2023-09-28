@@ -106,7 +106,7 @@ public class Controller {
 
             if (inp.equals("100"))
                 inp = "-1";
-            if (inp != "-1" && Integer.parseInt(inp) <= menuListLength && !inp.equals("0"))
+            if (!inp.equals("-1") && Integer.parseInt(inp) <= menuListLength && !inp.equals("0"))
                 inp = "100";
 
             switch (inp) {

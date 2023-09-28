@@ -6,7 +6,7 @@ import lombok.Getter;
 import binarfud.model.Menu;
 
 public class MenuService {
-    private @Getter LinkedHashMap<Integer, Menu>  menuList = new LinkedHashMap<Integer, Menu>();
+    private @Getter LinkedHashMap<Integer, Menu>  menuList = new LinkedHashMap<>();
 
     public MenuService(){
         menuList.put(1, new Menu(1, "Nasi Goreng", 15000));
