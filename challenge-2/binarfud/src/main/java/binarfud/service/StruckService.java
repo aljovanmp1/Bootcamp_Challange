@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.util.Map;
 
 import binarfud.model.Menu;
+import binarfud.model.Order;
 import binarfud.view.View;
 
 public class StruckService {
@@ -20,7 +21,7 @@ public class StruckService {
         printLine.close();
     }
 
-    public String getInvoice(Map<Integer, Integer> orderQty, Map<Integer, Menu> menuList) {
+    public String getInvoice(Map<Integer, Order> orderQty, Map<Integer, Menu> menuList) {
         String result = "";
         result += View.determineHeaderContent("BinarFud");
 

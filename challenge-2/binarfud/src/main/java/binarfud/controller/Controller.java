@@ -6,6 +6,7 @@ import java.util.Scanner;
 import lombok.NoArgsConstructor;
 
 import binarfud.model.Menu;
+import binarfud.model.Order;
 import binarfud.view.View;
 import binarfud.utlis.WrongInputException;
 import binarfud.utlis.Constants;
@@ -18,18 +19,18 @@ public class Controller {
     String state;
     boolean orderIsFinished = false;
     Menu selectedMenu;
-    
+
     Scanner input = new Scanner(System.in);
     private LinkedHashMap<Integer, Menu> menuList;
-    private LinkedHashMap<Integer, Integer> orderQty;
+    private LinkedHashMap<Integer, Order> orderQty;
     private View view;
 
     private StruckService struckService;
     private OrderService orderService;
 
-    public void menu(){
+    public void menu() {
         this.view = new View();
-        
+
         this.struckService = new StruckService();
         this.orderService = new OrderService();
         MenuService menuService = new MenuService();
@@ -50,6 +51,9 @@ public class Controller {
                         break;
                     case "menuSelected":
                         pickQuantity();
+                        break;
+                    case "note":
+                        submitNote();
                         break;
                     case "confirmation":
                         pickConfirmation();
@@ -95,91 +99,92 @@ public class Controller {
     private void pickMenu() throws WrongInputException {
         view.printMenu(menuList);
 
-        while (true) {
-            System.out.print("=> ");
-            String inp = input.nextLine();
+        System.out.print("=> ");
+        String inp = input.nextLine();
 
-            inp = handleIntInput(inp);
+        inp = handleIntInput(inp);
 
-            String inpBuf = inp;
-            int menuListLength = menuList.keySet().toArray().length;
+        String inpBuf = inp;
+        int menuListLength = menuList.keySet().toArray().length;
 
-            if (inp.equals("100"))
-                inp = "-1";
-            if (!inp.equals("-1") && Integer.parseInt(inp) <= menuListLength && !inp.equals("0"))
-                inp = "100";
+        if (inp.equals("-2"))
+            inp = "-1";
+        if (!inp.equals("-1") && Integer.parseInt(inp) <= menuListLength && !inp.equals("0"))
+            inp = "-2";
 
-            switch (inp) {
-                case "0":
-                    this.state = "exit";
-                    return;
-                case "100":
-                    this.state = "menuSelected";
-                    this.selectedMenu = menuList.get(Integer.parseInt(inpBuf));
-                    return;
-                case "99":
-                    this.state = "confirmation";
-                    return;
-                default:
-                    view.printError(Constants.WRONGINPUT);
-                    throw new WrongInputException(Constants.ERR_WRONGINPUT);
-            }
+        switch (inp) {
+            case "0":
+                this.state = "exit";
+                return;
+            case "-2":
+                this.state = "menuSelected";
+                this.selectedMenu = menuList.get(Integer.parseInt(inpBuf));
+                return;
+            case "99":
+                this.state = "confirmation";
+                return;
+            default:
+                view.printError(Constants.WRONGINPUT);
+                throw new WrongInputException(Constants.ERR_WRONGINPUT);
+        }
 
+    }
+
+    private void pickQuantity() throws WrongInputException {
+        view.printSelectedMenu(this.selectedMenu);
+        System.out.print("qty => ");
+        String inp = input.nextLine();
+
+        inp = handleIntInput(inp);
+
+        switch (inp) {
+            case "0":
+                this.state = "menu";
+                return;
+            case "-1":
+                view.printError(Constants.WRONGINPUT);
+                throw new WrongInputException(Constants.ERR_WRONGINPUT);
+            default:
+                this.orderService.addOrder(selectedMenu.getId(), Integer.parseInt(inp));
+                this.state = "note";
+                return;
         }
     }
 
-    private void pickQuantity() throws WrongInputException  {
-        view.printSelectedMenu(this.selectedMenu);
-        while (true) {
-            System.out.print("qty => ");
-            String inp = input.nextLine();
-
-            inp = handleIntInput(inp);
-
-            switch (inp) {
-                case "0":
-                    this.state = "menu";
-                    return;
-                case "-1":
-                    view.printError(Constants.WRONGINPUT);
-                    throw new WrongInputException(Constants.ERR_WRONGINPUT);
-                default:
-                    this.orderService.addOrder(selectedMenu.getId(), Integer.parseInt(inp));
-                    this.state = "menu";
-                    return;
-            }
-        }
+    private void submitNote(){
+        view.printSubmitNote();
+        String inp = input.nextLine();
+        this.orderService.addNote(selectedMenu.getId(), inp);
+        this.state = "menu";
     }
 
     private void pickConfirmation() throws WrongInputException {
         view.printConfirmation(orderQty, menuList);
 
-        while (true) {
-            System.out.print("=> ");
-            String inp = input.nextLine();
+        System.out.print("=> ");
+        String inp = input.nextLine();
 
-            switch (inp) {
-                case "1":
-                    if (orderQty.keySet().toArray().length < 1) {
-                        view.printError("emptyOrder");
-                        this.state = "menu";
-                        return;
-                    }
-                    this.state = "invoice";
-                    return;
-                case "2":
+        switch (inp) {
+            case "1":
+                if (orderQty.keySet().toArray().length < 1) {
+                    view.printError("emptyOrder");
                     this.state = "menu";
                     return;
-                case "0":
-                    this.state = "exit";
-                    return;
-                default:
-                    view.printError(Constants.WRONGINPUT);
-                    throw new WrongInputException(Constants.ERR_WRONGINPUT);
-            }
+                }
+                this.state = "invoice";
+                return;
+            case "2":
+                this.state = "menu";
+                return;
+            case "0":
+                this.state = "exit";
+                return;
+            default:
+                view.printError(Constants.WRONGINPUT);
+                throw new WrongInputException(Constants.ERR_WRONGINPUT);
         }
-    }
 
+    }
 
     private String handleIntInput(String inp) {
         try {

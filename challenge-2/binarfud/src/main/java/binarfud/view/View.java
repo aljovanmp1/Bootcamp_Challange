@@ -4,6 +4,7 @@ import java.util.Map;
 import lombok.NoArgsConstructor;
 
 import binarfud.model.Menu;
+import binarfud.model.Order;
 import binarfud.utlis.Constants;
 
 @NoArgsConstructor
@@ -30,7 +31,7 @@ public class View {
         System.out.println();
     }
 
-    public void printConfirmation(Map<Integer, Integer> orderQty, Map<Integer, Menu> menuList){
+    public void printConfirmation(Map<Integer, Order> orderQty, Map<Integer, Menu> menuList){
         printHeader("confirmation");
         System.out.print(formatOrderConfirmation(orderQty, menuList));
 
@@ -41,28 +42,44 @@ public class View {
         System.out.println();
     }
 
-    public static String formatOrderConfirmation(Map<Integer, Integer> orderQty, Map<Integer, Menu> menuList) {
+    public static String formatOrderConfirmation(Map<Integer, Order> orderQty, Map<Integer, Menu> menuList) {
         String result = "";
         int totalItem = 0;
         int totalPrice = 0;
 
         StringBuilder bld = new StringBuilder();
-        for (Map.Entry<Integer, Integer> entry : orderQty.entrySet()) {
+        int longestOrder = 0;
+        for (Map.Entry<Integer, Order> entry : orderQty.entrySet()) {
             
             Integer key = entry.getKey();
-            Integer qty = entry.getValue();
+            Order order = entry.getValue();
+            Integer qty = order.getQty();
+            String note = order.getNotes();
             String menuName = menuList.get(key).getName();
             
             Integer price = qty * menuList.get(key).getPrice() / 1000;
-            String resultFormat = "%-14s %-5s %s.000 %n";
+            String resultFormat = "%-14s %-5s %s.000  %s%n";
             
-            bld.append(String.format(resultFormat, menuName, qty, price));
+            
+            String newLineData = String.format(resultFormat, menuName, qty, price, note);
+            bld.append(newLineData);
+            
+            int resultLength = newLineData.length();
+            longestOrder = resultLength>longestOrder ? resultLength : longestOrder;
 
-            totalItem += orderQty.get(key);
-            totalPrice += orderQty.get(key) * menuList.get(key).getPrice();
+            totalItem += qty;
+            totalPrice += qty * menuList.get(key).getPrice();
         }
         result+= bld.toString();
-        result += "----------------------------+\n";
+
+        bld.setLength(0);
+        for (int i = 0; i <longestOrder; i++) {
+            bld.append("-");
+        }
+
+        if (longestOrder == 0) result+= "--------------------------- +\n";
+        else result += bld.toString() + " +\n";
+
         result += String.format("%-14s %-5s %s.000 %n", "Total", totalItem, (totalPrice) / 1000);
 
         return result;
@@ -94,6 +111,10 @@ public class View {
         result += sentence + Constants.NEWLINE;
         result += Constants.LINEWITHBREAK + Constants.NEWLINE;
         return result;
+    }
+
+    public void printSubmitNote(){
+        System.out.print("Masukkan Keterangan Tambahan => ");
     }
 
     public void printError(String state){
