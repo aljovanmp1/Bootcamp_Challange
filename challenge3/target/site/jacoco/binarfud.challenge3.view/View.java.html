@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>View.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">challenge3</a> &gt; <a href="index.source.html" class="el_package">binarfud.challenge3.view</a> &gt; <span class="el_source">View.java</span></div><h1>View.java</h1><pre class="source lang-java linenums">package binarfud.challenge3.view;
+
+import java.util.Map;
+import lombok.NoArgsConstructor;
+
+import binarfud.challenge3.model.Menu;
+import binarfud.challenge3.model.Order;
+import binarfud.challenge3.utlis.Constants;
+
+<span class="nc" id="L10">@NoArgsConstructor</span>
+public class View {
+
+    public void printMenu(Map&lt;Integer, Menu&gt; menuList){
+<span class="nc" id="L14">        printHeader(&quot;menu&quot;);</span>
+<span class="nc" id="L15">        int ind = 1;</span>
+<span class="nc" id="L16">        System.out.println(&quot;Silahkan pilih makanan : &quot;);</span>
+<span class="nc bnc" id="L17" title="All 2 branches missed.">        for (Map.Entry&lt;Integer, Menu&gt; entry : menuList.entrySet()) {</span>
+<span class="nc" id="L18">            Menu menu = entry.getValue();</span>
+<span class="nc" id="L19">            System.out.printf(&quot;%d. %-13s| %d.000%n&quot;, ind, menu.getName(), menu.getPrice() / 1000);</span>
+<span class="nc" id="L20">            ind++;</span>
+<span class="nc" id="L21">        }</span>
+<span class="nc" id="L22">        System.out.println(&quot;99. Pesan dan Bayar&quot;);</span>
+<span class="nc" id="L23">        System.out.println(&quot;0. Keluar Aplikasi&quot;);</span>
+<span class="nc" id="L24">        System.out.println();</span>
+<span class="nc" id="L25">    }</span>
+
+    public void printSelectedMenu(Menu selectedMenu) {
+<span class="nc" id="L28">        printHeader(&quot;menuSelected&quot;);</span>
+<span class="nc" id="L29">        System.out.printf(&quot;%-13s| %d.000%n&quot;, selectedMenu.getName(), selectedMenu.getPrice() / 1000);</span>
+<span class="nc" id="L30">        System.out.println(&quot;(input 0 untuk kembali)&quot;);</span>
+<span class="nc" id="L31">        System.out.println();</span>
+<span class="nc" id="L32">    }</span>
+
+    public void printConfirmation(Map&lt;Integer, Order&gt; orderQty, Map&lt;Integer, Menu&gt; menuList){
+<span class="nc" id="L35">        printHeader(&quot;confirmation&quot;);</span>
+<span class="nc" id="L36">        System.out.print(formatOrderConfirmation(orderQty, menuList));</span>
+
+<span class="nc" id="L38">        System.out.println();</span>
+<span class="nc" id="L39">        System.out.println(&quot;1. Konfirmasi dan Bayar&quot;);</span>
+<span class="nc" id="L40">        System.out.println(&quot;2. Kembali ke menu utama&quot;);</span>
+<span class="nc" id="L41">        System.out.println(&quot;0. Keluar aplikasi&quot;);</span>
+<span class="nc" id="L42">        System.out.println();</span>
+<span class="nc" id="L43">    }</span>
+
+    public static String formatOrderConfirmation(Map&lt;Integer, Order&gt; orderQty, Map&lt;Integer, Menu&gt; menuList) {
+<span class="nc" id="L46">        String result = &quot;&quot;;</span>
+<span class="nc" id="L47">        int totalItem = 0;</span>
+<span class="nc" id="L48">        int totalPrice = 0;</span>
+
+<span class="nc" id="L50">        StringBuilder bld = new StringBuilder();</span>
+<span class="nc" id="L51">        int longestOrder = 0;</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        for (Map.Entry&lt;Integer, Order&gt; entry : orderQty.entrySet()) {</span>
+            
+<span class="nc" id="L54">            Integer key = entry.getKey();</span>
+<span class="nc" id="L55">            Order order = entry.getValue();</span>
+<span class="nc" id="L56">            Integer qty = order.getQty();</span>
+<span class="nc" id="L57">            String note = order.getNotes();</span>
+<span class="nc" id="L58">            String menuName = menuList.get(key).getName();</span>
+            
+<span class="nc" id="L60">            Integer price = qty * menuList.get(key).getPrice() / 1000;</span>
+<span class="nc" id="L61">            String resultFormat = &quot;%-14s %-5s %s.000  %s%n&quot;;</span>
+            
+            
+<span class="nc" id="L64">            String newLineData = String.format(resultFormat, menuName, qty, price, note);</span>
+<span class="nc" id="L65">            bld.append(newLineData);</span>
+            
+<span class="nc" id="L67">            int resultLength = newLineData.length();</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            longestOrder = resultLength&gt;longestOrder ? resultLength : longestOrder;</span>
+
+<span class="nc" id="L70">            totalItem += qty;</span>
+<span class="nc" id="L71">            totalPrice += qty * menuList.get(key).getPrice();</span>
+<span class="nc" id="L72">        }</span>
+<span class="nc" id="L73">        result+= bld.toString();</span>
+
+<span class="nc" id="L75">        bld.setLength(0);</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        for (int i = 0; i &lt;longestOrder; i++) {</span>
+<span class="nc" id="L77">            bld.append(&quot;-&quot;);</span>
+        }
+
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        if (longestOrder == 0) result+= &quot;--------------------------- +\n&quot;;</span>
+<span class="nc" id="L81">        else result += bld.toString() + &quot; +\n&quot;;</span>
+
+<span class="nc" id="L83">        result += String.format(&quot;%-14s %-5s %s.000 %n&quot;, &quot;Total&quot;, totalItem, (totalPrice) / 1000);</span>
+
+<span class="nc" id="L85">        return result;</span>
+    }
+
+    private void printHeader(String state) {
+<span class="nc bnc" id="L89" title="All 5 branches missed.">        switch (state) {</span>
+            case &quot;menu&quot;:
+<span class="nc" id="L91">                System.out.print(determineHeaderContent(&quot;Selamat datang di binarfud&quot;));</span>
+<span class="nc" id="L92">                break;</span>
+            case &quot;menuSelected&quot;:
+<span class="nc" id="L94">                System.out.print(determineHeaderContent(&quot;Berapa pesanan anda&quot;));</span>
+<span class="nc" id="L95">                break;</span>
+            case &quot;confirmation&quot;:
+<span class="nc" id="L97">                System.out.print(determineHeaderContent(&quot;Konfirmasi &amp; Pembayaran&quot;));</span>
+<span class="nc" id="L98">                break;</span>
+            case &quot;invoice&quot;:
+<span class="nc" id="L100">                System.out.print(determineHeaderContent(&quot;binarfud&quot;));</span>
+<span class="nc" id="L101">                break;</span>
+            default:
+                break;
+        }
+<span class="nc" id="L105">    }</span>
+
+    public static String determineHeaderContent(String sentence) {
+<span class="nc" id="L108">        String result = &quot;&quot;;</span>
+<span class="nc" id="L109">        result += Constants.NEWLINE;</span>
+<span class="nc" id="L110">        result += Constants.LINEWITHBREAK;</span>
+<span class="nc" id="L111">        result += sentence + Constants.NEWLINE;</span>
+<span class="nc" id="L112">        result += Constants.LINEWITHBREAK + Constants.NEWLINE;</span>
+<span class="nc" id="L113">        return result;</span>
+    }
+
+    public void printSubmitNote(){
+<span class="nc" id="L117">        System.out.print(&quot;Masukkan Keterangan Tambahan =&gt; &quot;);</span>
+<span class="nc" id="L118">    }</span>
+
+    public void printError(String state){
+<span class="nc" id="L121">        String sentence = &quot;&quot;;</span>
+<span class="nc" id="L122">        String footer = &quot;&quot;;</span>
+<span class="nc bnc" id="L123" title="All 3 branches missed.">        switch(state) {</span>
+            case Constants.WRONGINPUT:
+<span class="nc" id="L125">                sentence+= &quot;Mohon masukkan input\n&quot;;</span>
+<span class="nc" id="L126">                sentence+= &quot;pilihan anda&quot;;</span>
+<span class="nc" id="L127">                footer+= &quot;(Y) untuk lanjut\n&quot;;</span>
+<span class="nc" id="L128">                footer+= &quot;(n) untuk keluar&quot;;</span>
+<span class="nc" id="L129">                break;</span>
+            case Constants.EMPTYORDER:
+<span class="nc" id="L131">                sentence+= &quot;Minimal 1 jumlah\n&quot;;</span>
+<span class="nc" id="L132">                sentence+= &quot;pesanan!&quot;;</span>
+<span class="nc" id="L133">                break;</span>
+            default:
+                break;
+        }
+
+<span class="nc" id="L138">        String result = &quot;&quot;;</span>
+<span class="nc" id="L139">        result += Constants.NEWLINE;</span>
+<span class="nc" id="L140">        result += Constants.LINEWITHBREAK;</span>
+<span class="nc" id="L141">        result += sentence + Constants.NEWLINE;</span>
+<span class="nc" id="L142">        result += Constants.LINEWITHBREAK;</span>
+<span class="nc" id="L143">        result += footer + Constants.NEWLINE;</span>
+        
+<span class="nc" id="L145">        System.out.print(result);</span>
+<span class="nc" id="L146">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

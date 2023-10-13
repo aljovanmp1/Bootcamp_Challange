@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Controller.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">challenge3</a> &gt; <a href="index.source.html" class="el_package">binarfud.challenge3.controller</a> &gt; <span class="el_source">Controller.java</span></div><h1>Controller.java</h1><pre class="source lang-java linenums">package binarfud.challenge3.controller;
+
+import java.util.LinkedHashMap;
+import java.io.IOException;
+import java.util.Scanner;
+import lombok.Getter;
+
+import binarfud.challenge3.model.Menu;
+import binarfud.challenge3.model.Order;
+import binarfud.challenge3.view.View;
+import binarfud.challenge3.utlis.WrongInputException;
+import binarfud.challenge3.utlis.Constants;
+import binarfud.challenge3.service.StruckService;
+import binarfud.challenge3.service.MenuService;
+import binarfud.challenge3.service.OrderService;
+
+
+public class Controller {
+<span class="nc" id="L19">    private @Getter String state = &quot;menu&quot;;</span>
+<span class="nc" id="L20">    boolean orderIsFinished = false;</span>
+    Menu selectedMenu;
+
+<span class="nc" id="L23">    Scanner input = new Scanner(System.in);</span>
+    private LinkedHashMap&lt;Integer, Menu&gt; menuList;
+    private LinkedHashMap&lt;Integer, Order&gt; orderQty;
+    private View view;
+
+    private StruckService struckService;
+    private OrderService orderService;
+
+<span class="nc" id="L31">    public Controller(){</span>
+<span class="nc" id="L32">        this.view = new View();</span>
+
+<span class="nc" id="L34">        this.struckService = new StruckService();</span>
+<span class="nc" id="L35">        this.orderService = new OrderService();</span>
+<span class="nc" id="L36">        MenuService menuService = new MenuService();</span>
+
+<span class="nc" id="L38">        this.orderQty = orderService.getOrderQty();</span>
+<span class="nc" id="L39">        this.menuList = menuService.getMenuList();</span>
+<span class="nc" id="L40">    }</span>
+
+    public void menu() {
+<span class="nc" id="L43">        selectMenu();</span>
+<span class="nc" id="L44">    }</span>
+
+    public void updateSomething(){
+<span class="nc" id="L47">        this.state = &quot;Hallo&quot;;</span>
+<span class="nc" id="L48">    }</span>
+
+    public void selectMenu() {
+        String inp;
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        while (!this.orderIsFinished) {</span>
+            try {
+<span class="nc bnc" id="L54" title="All 7 branches missed.">                switch (this.state) {</span>
+                    case &quot;menu&quot;:
+<span class="nc" id="L56">                        view.printMenu(menuList);</span>
+<span class="nc" id="L57">                        inp = receiveInputHandler(&quot;=&gt; &quot;);</span>
+<span class="nc" id="L58">                        pickMenu(inp);</span>
+<span class="nc" id="L59">                        break;</span>
+                    case &quot;menuSelected&quot;:
+<span class="nc" id="L61">                        view.printSelectedMenu(this.selectedMenu);</span>
+<span class="nc" id="L62">                        inp = receiveInputHandler(&quot;qty =&gt; &quot;);</span>
+<span class="nc" id="L63">                        pickQuantity(inp);</span>
+<span class="nc" id="L64">                        break;</span>
+                    case &quot;note&quot;:
+<span class="nc" id="L66">                        view.printSubmitNote();</span>
+<span class="nc" id="L67">                        inp = receiveInputHandler(&quot;&quot;);</span>
+<span class="nc" id="L68">                        submitNote(inp);</span>
+<span class="nc" id="L69">                        break;</span>
+                    case &quot;confirmation&quot;:
+<span class="nc" id="L71">                        view.printConfirmation(orderQty, menuList);</span>
+<span class="nc" id="L72">                        inp = receiveInputHandler(&quot;=&gt; &quot;);</span>
+<span class="nc" id="L73">                        pickConfirmation(inp);</span>
+<span class="nc" id="L74">                        break;</span>
+                    case &quot;invoice&quot;:
+<span class="nc" id="L76">                        String invoice = struckService.getInvoice(orderQty, menuList);</span>
+<span class="nc" id="L77">                        System.out.print(invoice);</span>
+<span class="nc" id="L78">                        struckService.saveInvoiceToFile(invoice);</span>
+<span class="nc" id="L79">                        this.state = &quot;exit&quot;;</span>
+<span class="nc" id="L80">                        break;</span>
+                    case &quot;exit&quot;:
+<span class="nc" id="L82">                        this.orderIsFinished = true;</span>
+<span class="nc" id="L83">                        break;</span>
+                    default:
+<span class="nc" id="L85">                        this.orderIsFinished = true;</span>
+                }
+
+<span class="nc" id="L88">            } catch (IOException e) {</span>
+<span class="nc" id="L89">                System.out.println(&quot;Something went wrong: &quot; + e.getMessage());</span>
+
+<span class="nc" id="L91">            } catch (WrongInputException e) {</span>
+<span class="nc" id="L92">                boolean isStillWrong = true;</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                while (isStillWrong) {</span>
+<span class="nc" id="L94">                    System.out.print(&quot;=&gt; &quot;);</span>
+<span class="nc" id="L95">                    inp = input.nextLine();</span>
+<span class="nc bnc" id="L96" title="All 3 branches missed.">                    switch (inp) {</span>
+                        case &quot;n&quot;:
+<span class="nc" id="L98">                            this.state = &quot;exit&quot;;</span>
+<span class="nc" id="L99">                            isStillWrong = false;</span>
+<span class="nc" id="L100">                            break;</span>
+                        case &quot;Y&quot;:
+<span class="nc" id="L102">                            isStillWrong = false;</span>
+<span class="nc" id="L103">                            break;</span>
+                        default:
+<span class="nc" id="L105">                            view.printError(Constants.WRONGINPUT);</span>
+<span class="nc" id="L106">                            continue;</span>
+<span class="nc" id="L107">                    }</span>
+                }
+<span class="nc" id="L109">            }</span>
+        }
+<span class="nc" id="L111">    }</span>
+
+    public void pickMenu(String inp) throws WrongInputException {
+<span class="nc" id="L114">        inp = handleIntInput(inp);</span>
+
+<span class="nc" id="L116">        String inpBuf = inp;</span>
+<span class="nc" id="L117">        int menuListLength = menuList.keySet().toArray().length;</span>
+
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (inp.equals(&quot;-2&quot;))</span>
+<span class="nc" id="L120">            inp = &quot;-1&quot;;</span>
+<span class="nc bnc" id="L121" title="All 6 branches missed.">        if (!inp.equals(&quot;-1&quot;) &amp;&amp; Integer.parseInt(inp) &lt;= menuListLength &amp;&amp; !inp.equals(&quot;0&quot;))</span>
+<span class="nc" id="L122">            inp = &quot;-2&quot;;</span>
+
+<span class="nc bnc" id="L124" title="All 4 branches missed.">        switch (inp) {</span>
+            case &quot;0&quot;:
+<span class="nc" id="L126">                this.state = &quot;exit&quot;;</span>
+<span class="nc" id="L127">                return;</span>
+            case &quot;-2&quot;:
+<span class="nc" id="L129">                this.state = &quot;menuSelected&quot;;</span>
+<span class="nc" id="L130">                this.selectedMenu = menuList.get(Integer.parseInt(inpBuf));</span>
+<span class="nc" id="L131">                return;</span>
+            case &quot;99&quot;:
+<span class="nc" id="L133">                this.state = &quot;confirmation&quot;;</span>
+<span class="nc" id="L134">                return;</span>
+            default:
+<span class="nc" id="L136">                view.printError(Constants.WRONGINPUT);</span>
+<span class="nc" id="L137">                throw new WrongInputException(Constants.ERR_WRONGINPUT);</span>
+        }
+
+    }
+
+    public void pickQuantity(String inp) throws WrongInputException {
+<span class="nc" id="L143">        inp = handleIntInput(inp);</span>
+
+<span class="nc bnc" id="L145" title="All 3 branches missed.">        switch (inp) {</span>
+            case &quot;0&quot;:
+<span class="nc" id="L147">                this.state = &quot;menu&quot;;</span>
+<span class="nc" id="L148">                return;</span>
+            case &quot;-1&quot;:
+<span class="nc" id="L150">                view.printError(Constants.WRONGINPUT);</span>
+<span class="nc" id="L151">                throw new WrongInputException(Constants.ERR_WRONGINPUT);</span>
+            default:
+<span class="nc" id="L153">                this.orderService.addOrder(selectedMenu.getId(), Integer.parseInt(inp));</span>
+<span class="nc" id="L154">                this.state = &quot;note&quot;;</span>
+<span class="nc" id="L155">                return;</span>
+        }
+    }
+
+    public void submitNote(String inp) {
+<span class="nc" id="L160">        this.orderService.addNote(selectedMenu.getId(), inp);</span>
+<span class="nc" id="L161">        this.state = &quot;menu&quot;;</span>
+<span class="nc" id="L162">    }</span>
+
+    public void pickConfirmation(String inp) throws WrongInputException {
+<span class="nc bnc" id="L165" title="All 4 branches missed.">        switch (inp) {</span>
+            case &quot;1&quot;:
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                if (orderQty.keySet().toArray().length &lt; 1) {</span>
+<span class="nc" id="L168">                    view.printError(&quot;emptyOrder&quot;);</span>
+<span class="nc" id="L169">                    this.state = &quot;menu&quot;;</span>
+<span class="nc" id="L170">                    return;</span>
+                }
+<span class="nc" id="L172">                this.state = &quot;invoice&quot;;</span>
+<span class="nc" id="L173">                return;</span>
+            case &quot;2&quot;:
+<span class="nc" id="L175">                this.state = &quot;menu&quot;;</span>
+<span class="nc" id="L176">                return;</span>
+            case &quot;0&quot;:
+<span class="nc" id="L178">                this.state = &quot;exit&quot;;</span>
+<span class="nc" id="L179">                return;</span>
+            default:
+<span class="nc" id="L181">                view.printError(Constants.WRONGINPUT);</span>
+<span class="nc" id="L182">                throw new WrongInputException(Constants.ERR_WRONGINPUT);</span>
+        }
+
+    }
+
+    private String receiveInputHandler(String flag) {
+<span class="nc" id="L188">        System.out.print(flag);</span>
+<span class="nc" id="L189">        return input.nextLine();</span>
+    }
+
+    private String handleIntInput(String inp) {
+        try {
+<span class="nc" id="L194">            int num = Integer.parseInt(inp);</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">            if (num &lt; 0) {</span>
+<span class="nc" id="L196">                return &quot;-1&quot;;</span>
+            }
+<span class="nc" id="L198">            return inp;</span>
+<span class="nc" id="L199">        } catch (Exception e) {</span>
+<span class="nc" id="L200">            return &quot;-1&quot;;</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

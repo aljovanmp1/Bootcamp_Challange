@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">challenge3</a> &gt; <a href="index.source.html" class="el_package">binarfud.challenge3.service</a> &gt; <span class="el_source">OrderService.java</span></div><h1>OrderService.java</h1><pre class="source lang-java linenums">package binarfud.challenge3.service;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import binarfud.challenge3.model.Order;
+
+<span class="nc" id="L14">@NoArgsConstructor</span>
+public class OrderService {
+<span class="nc" id="L16">    private @Getter LinkedHashMap&lt;Integer, Order&gt; orderQty = new LinkedHashMap&lt;&gt;();</span>
+
+    public void addOrder(Integer menuId, Integer qty) {
+<span class="nc bnc" id="L19" title="All 2 branches missed.">        if (!orderQty.containsKey(menuId)) {</span>
+<span class="nc" id="L20">            Order newOrder = new Order();</span>
+<span class="nc" id="L21">            newOrder.setQty(qty);</span>
+<span class="nc" id="L22">            orderQty.put(menuId, newOrder);</span>
+<span class="nc" id="L23">        } else {</span>
+<span class="nc" id="L24">            Order order = orderQty.get(menuId);</span>
+<span class="nc" id="L25">            order.setQty(qty);</span>
+        }
+<span class="nc" id="L27">    }</span>
+
+    public void addNote(Integer menuId, String note) {
+<span class="nc" id="L30">        Order order = orderQty.get(menuId);</span>
+<span class="nc" id="L31">        order.setNotes(note);</span>
+<span class="nc" id="L32">    }</span>
+
+
+    public static void main(String[] args) {
+<span class="nc" id="L36">        OrderService service = new OrderService();</span>
+
+<span class="nc" id="L38">        LinkedHashMap&lt;Integer, Order&gt; orderQtyData = service.getOrderQty();</span>
+
+<span class="nc" id="L40">        Order order1 = new Order();</span>
+<span class="nc" id="L41">        Order order2 = new Order();</span>
+<span class="nc" id="L42">        order1.setQty(10);</span>
+<span class="nc" id="L43">        order2.setQty(20);</span>
+
+<span class="nc" id="L45">        orderQtyData.put(1, order1);</span>
+<span class="nc" id="L46">        orderQtyData.put(2, order2);</span>
+
+<span class="nc" id="L48">        int sum = orderQtyData.values()</span>
+<span class="nc" id="L49">                .stream()</span>
+<span class="nc" id="L50">                .mapToInt(Order::getQty)</span>
+<span class="nc" id="L51">                .sum();</span>
+
+<span class="nc" id="L53">        System.out.println();</span>
+<span class="nc" id="L54">        System.out.println(&quot;sum:&quot; + sum);</span>
+
+<span class="nc" id="L56">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

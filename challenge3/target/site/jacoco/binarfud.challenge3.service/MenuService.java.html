@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MenuService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">challenge3</a> &gt; <a href="index.source.html" class="el_package">binarfud.challenge3.service</a> &gt; <span class="el_source">MenuService.java</span></div><h1>MenuService.java</h1><pre class="source lang-java linenums">package binarfud.challenge3.service;
+
+import java.util.LinkedHashMap;
+import lombok.Getter;
+
+import binarfud.challenge3.model.Menu;
+
+public class MenuService {
+<span class="nc" id="L9">    private @Getter LinkedHashMap&lt;Integer, Menu&gt;  menuList = new LinkedHashMap&lt;&gt;();</span>
+
+<span class="nc" id="L11">    public MenuService(){</span>
+<span class="nc" id="L12">        menuList.put(1, new Menu(1, &quot;Nasi Goreng&quot;, 15000));</span>
+<span class="nc" id="L13">        menuList.put(2, new Menu(2, &quot;Mie Goreng&quot;, 13000));</span>
+<span class="nc" id="L14">        menuList.put(3, new Menu(3, &quot;Nasi + Ayam&quot;, 18000));</span>
+<span class="nc" id="L15">        menuList.put(4, new Menu(4, &quot;Es Teh Manis&quot;, 3000));</span>
+<span class="nc" id="L16">        menuList.put(5, new Menu(5, &quot;Es Jeruk&quot;, 5000));</span>
+<span class="nc" id="L17">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
