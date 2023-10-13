@@ -17,7 +17,7 @@ public class OrderDetail {
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private OrderEntity order;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     Menu menu;
 

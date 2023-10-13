@@ -1,1 +1,21 @@
-Invoice cek
+
+========================
+binarfud
+========================
+
+Terima kasih sudah memesan
+di binarfud
+
+Dibawah ini adalah pesanan anda
+Nasi Goreng    2     30.000  Pedes
+Mie Goreng     1     13.000  Tidak Pedes
+------------------------------------------ +
+Total          3     43.000 
+
+Pembayaran : BinarCash
+
+========================
+Simpan struk ini sebagai
+bukti pembayaran
+========================
+
