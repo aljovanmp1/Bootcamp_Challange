@@ -19,5 +19,5 @@ public class Merchant {
     private String merchantName;
     @Column(name = "merchant_location")
     private String merchantLocation;
-    private String open;
+    private Boolean open;
 }

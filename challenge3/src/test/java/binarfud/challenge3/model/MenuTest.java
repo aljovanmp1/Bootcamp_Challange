@@ -11,10 +11,17 @@ public class MenuTest {
     @DisplayName("Positive Test - menu getter")
     void menuGetterTest(){
         Menu menu = new Menu();
+        menu.setId(1L);
+        menu.setProductName("nasi goreng");
+        menu.setPrice(10000);
+        
+        Merchant newMerchant = new Merchant();
+        menu.setMerchant(newMerchant);
 
-        Assertions.assertEquals(1, menu.getId());
+        Assertions.assertEquals(1L, menu.getId());
         Assertions.assertEquals("nasi goreng", menu.getProductName());
         Assertions.assertEquals(10000, menu.getPrice());
+        Assertions.assertEquals(menu.getMerchant(), newMerchant);
 
     }
 }

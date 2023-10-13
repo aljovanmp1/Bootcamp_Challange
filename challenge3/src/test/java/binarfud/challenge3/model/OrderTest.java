@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 public class OrderTest {
     @Test
     @DisplayName("Positive Test - order setter getter")
-    void menuGetterTest(){
+    void orderGetterTest(){
         Order order = new Order();
 
         order.setQty(1);

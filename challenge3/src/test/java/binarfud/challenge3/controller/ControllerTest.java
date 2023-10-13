@@ -11,15 +11,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import binarfud.challenge3.utlis.WrongInputException;
 import binarfud.challenge3.service.AppService;
+import binarfud.challenge3.service.OrderService;
 import binarfud.challenge3.utlis.Constants;
 
 @SpringBootTest
 class ControllerTest {
 
-    @Autowired
-    private AppService appService;
+    // @Autowired
+    // private AppService appService;
 
-    Controller controller = appService.getController();
+    @Autowired
+    private Controller controller;
+
+    @Autowired
+    private OrderService orderService;
 
     @Test
     @DisplayName("Positive Test - pick menu")
@@ -149,6 +154,7 @@ class ControllerTest {
     @DisplayName("Negative Test - Empty Order")
     void pickEmptyOrderConfirmationTest(){
         try{
+            orderService.clearOrder();
             controller.pickConfirmation("1");
         } catch(Exception e){
             System.out.println("confirmation err:" + e.getMessage());
