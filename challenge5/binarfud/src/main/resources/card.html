@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 50px;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            border-bottom: 2px black solid;
+            margin-bottom: 10px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .order-info {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+        }
+
+        .order {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .order h3 {
+            margin: 0;
+        }
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            margin-right: 50px;
+            border: 1px solid #000;
+
+        }
+
+        .item img {
+            position: relative;
+            top: -20px;
+        }
+
+        .order-detail {
+            margin-top: 40px;
+        }
+
+        .order-detail span {
+            font-weight: bold;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table td {
+            padding: 15px;
+            max-width: 100px;
+            width: 100px;
+            overflow: auto;
+        }
+
+        table td:nth-child(1) {
+            max-width: 20px;
+            width: 20px;
+            padding: 5px;
+        }
+
+        table td:nth-child(2) {
+            max-width: 200px;
+            width: 200px;
+            padding: 15px;
+        }
+
+        table thead td {
+            background-color: #c7cace;
+            color: #3e3333;
+            font-weight: bold;
+            font-size: 13px;
+            border: 1px solid #b6b9bd;
+            text-align: center;
+        }
+
+        table tbody td {
+            color: #636363;
+            border: 1px solid #dddfe1;
+            text-align: center;
+        }
+
+        .total table tbody td:nth-last-child(2) {
+            max-width: 80px;
+            width: 80px;
+        }
+
+        .total table tbody td:last-child {
+            max-width: 140px;
+            width: 140px;
+        }
+
+        .total table tbody td {
+            color: #fff;
+            border: none;
+            max-width: 200px;
+            text-align: start;
+        }
+
+        table tbody tr {
+            background-color: #f9fafb;
+        }
+
+        table tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        .grand-total {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #808080;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        /* .total {
+            display: flex;
+            justify-content: flex-end;
+        } */
+    </style>
+</head>
+
+<body>
+
+    <!-- Used to display heading content -->
+    <div class="header">
+        <h1>Order Analysis</h1>
+        <span>Merchant id xxx</span>
+    </div>
+
+    <div class="order">
+        <h3 class="bold">Merchant Infromation</h3>
+        <div class="order-info">
+            <div class="item">
+                <img
+                    src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Ffree-icon%2Fhome_25694&psig=AOvVaw1qBf_Dk6HiACx_OpQJ-6-v&ust=1699951105448000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCMjfosDJwIIDFQAAAAAdAAAAABAD"></img>
+                <span class="bold">Name</span>
+                <span>Aljovan</span>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
