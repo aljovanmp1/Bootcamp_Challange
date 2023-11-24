@@ -1,14 +1,13 @@
 package challenge6.binarfud.controller;
 
+import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.hibernate.action.internal.OrphanRemovalAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +22,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import challenge6.binarfud.dto.ResponseHandler;
 import challenge6.binarfud.dto.auth.request.AddUserDto;
+import challenge6.binarfud.dto.auth.request.ForgetPassword;
 import challenge6.binarfud.dto.auth.request.LoginRequest;
+import challenge6.binarfud.dto.auth.request.ResetPassword;
 import challenge6.binarfud.dto.auth.response.JwtResponse;
 import challenge6.binarfud.model.Role;
 import challenge6.binarfud.model.User;
 import challenge6.binarfud.security.jwt.JwtUtils;
+import challenge6.binarfud.security.jwt.OtpJwtDto;
 import challenge6.binarfud.security.service.UserDetailsImpl;
+import challenge6.binarfud.service.EmailService;
+import challenge6.binarfud.service.OtpService;
 import challenge6.binarfud.service.RoleService;
 import challenge6.binarfud.service.UserService;
+import challenge6.binarfud.utlis.DataNotFoundException;
 import challenge6.binarfud.utlis.ResourceAlreadyExistException;
 import challenge6.binarfud.utlis.RoleNotExistException;
 import jakarta.validation.Valid;
@@ -55,10 +64,14 @@ public class AuthController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    OtpService otpService;
+
+    @Autowired
+    EmailService emailService;
+
     @PostMapping("/signin")
     public ResponseEntity<?> authenticate(@RequestBody LoginRequest loginRequest) {
-        System.out.println("username: " + loginRequest.getUsername());
-        System.out.println("password: " + loginRequest.getPassword());
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(), loginRequest.getPassword()));
@@ -75,7 +88,6 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<Map<String, Object>> add(@Valid @RequestBody AddUserDto dataDto) {
-
         Map<String, Object> response = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
         try {
@@ -111,7 +123,7 @@ public class AuthController {
 
             newUser = userService.addOrUpdateUser(newUser);
 
-            data.put("merchants", newUser);
+            // data.put("user", newUser);
             response.put("data", data);
             response.put("status", "success");
 
@@ -124,5 +136,72 @@ public class AuthController {
             return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
         }
 
+    }
+
+    @PostMapping("/forget-password")
+    public ResponseEntity<Map<String, Object>> forgetPwd(@Valid @RequestBody ForgetPassword req) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+
+        try {
+            Optional<User> existUser = userService.getUserByUserName(req.getUsername());
+            if (!existUser.isPresent())
+                throw new DataNotFoundException("username not found");
+            String email = existUser.get().getEmailAddress();
+
+            String otp = otpService.generateOTP(req.getUsername());
+            emailService.sendSimpleMessage(email, "OTP Password Binarfud", "otp: " + otp);
+            response.put("status", "success");
+
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        } catch (DataNotFoundException e) {
+            response.put("status", "fail");
+            data.put("user", e.getMessage());
+            response.put("data", data);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, Object>> resetPwd(@Valid @RequestBody ResetPassword req) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+        try {
+            if (!otpService.validateOtp(req.getOtp()))
+                throw new DataNotFoundException("otp is invalid");
+            String jwtContent = jwtUtils.getUsername(req.getOtp());
+
+            ObjectMapper mapper = new ObjectMapper();
+            TypeReference<HashMap<String, OtpJwtDto>> typeRef = new TypeReference<HashMap<String, OtpJwtDto>>() {};
+
+            HashMap<String, OtpJwtDto> o = mapper.readValue(jwtContent, typeRef);
+            System.out.println("jwtContent: " + jwtContent);
+
+            OtpJwtDto userData = o.get("data");
+            System.out.println("userData: " + userData.getUsername());
+
+            Optional<User> existUser = userService.getUserByUserName(userData.getUsername());
+            if (!existUser.isPresent())
+                throw new DataNotFoundException("username not found");
+
+            User user = existUser.get();
+            user.setPassword(passwordEncoder.encode(req.getPassword()));
+            userService.addOrUpdateUser(user);
+
+            response.put("status", "success");
+
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (DataNotFoundException e) {
+            response.put("status", "fail");
+            data.put("user", e.getMessage());
+            response.put("data", data);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        } catch(JsonProcessingException e){
+            response.put("status", "fail");
+            data.put("user", e.getMessage());
+            response.put("data", data);
+            return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 }
