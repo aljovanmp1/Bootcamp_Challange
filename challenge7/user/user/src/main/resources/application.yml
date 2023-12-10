@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: user
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://ep-shy-brook-96918864.ap-southeast-1.aws.neon.tech/binarfud_user
+    username: aljovanmp1
+    password: 0S8eCKRuzpNn
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+        ddl-auto: update
+  kafka:
+    bootstrap-servers: http://localhost:9092
+  cloud:
+    config:
+      import-check:
+        enabled: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: binarfudcoba@gmail.com
+    password: mnoy rqjp umns xlwc
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
+jwtSecret: thisisasecretthatsupposedtobeunkown123sodonttellanyoneaboutthispwdokay
+jwtExpirationMs: 500000000
+
+server:
+  port: 3001
+
+# security:
+#   basic:
+#     enabled: false
+# management:
+#   security:
+#     enabled: false
+
+# spring:
+#   application:
+#     name: user
+#   config:
+#     import: optional:configserver:http://localhost:8888
+

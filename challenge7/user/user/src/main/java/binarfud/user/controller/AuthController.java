@@ -1,4 +1,4 @@
-package challenge6.binarfud.controller;
+package binarfud.user.controller;
 
 import java.io.File;
 import java.util.HashMap;
@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,28 +27,28 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import challenge6.binarfud.dto.ResponseHandler;
-import challenge6.binarfud.dto.auth.request.AddUserDto;
-import challenge6.binarfud.dto.auth.request.ForgetPassword;
-import challenge6.binarfud.dto.auth.request.LoginRequest;
-import challenge6.binarfud.dto.auth.request.ResetPassword;
-import challenge6.binarfud.dto.auth.response.JwtResponse;
-import challenge6.binarfud.model.Role;
-import challenge6.binarfud.model.User;
-import challenge6.binarfud.security.jwt.JwtUtils;
-import challenge6.binarfud.security.jwt.OtpJwtDto;
-import challenge6.binarfud.security.service.UserDetailsImpl;
-import challenge6.binarfud.service.EmailService;
-import challenge6.binarfud.service.OtpService;
-import challenge6.binarfud.service.RoleService;
-import challenge6.binarfud.service.UserService;
-import challenge6.binarfud.utlis.DataNotFoundException;
-import challenge6.binarfud.utlis.ResourceAlreadyExistException;
-import challenge6.binarfud.utlis.RoleNotExistException;
+import binarfud.user.dto.ResponseHandler;
+import binarfud.user.dto.auth.request.AddUserDto;
+import binarfud.user.dto.auth.request.ForgetPassword;
+import binarfud.user.dto.auth.request.LoginRequest;
+import binarfud.user.dto.auth.request.ResetPassword;
+import binarfud.user.dto.auth.response.JwtResponse;
+import binarfud.user.model.Role;
+import binarfud.user.model.User;
+import binarfud.user.security.jwt.JwtUtils;
+import binarfud.user.security.jwt.OtpJwtDto;
+import binarfud.user.security.service.UserDetailsImpl;
+import binarfud.user.service.EmailService;
+import binarfud.user.service.OtpService;
+import binarfud.user.service.RoleService;
+import binarfud.user.service.UserService;
+import binarfud.user.utlis.DataNotFoundException;
+import binarfud.user.utlis.ResourceAlreadyExistException;
+import binarfud.user.utlis.RoleNotExistException;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("user/public")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
