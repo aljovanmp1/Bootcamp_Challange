@@ -2,10 +2,15 @@ package challenge6.binarfud.security.jwt;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import challenge6.binarfud.security.service.UserDetailsImpl;
 import io.jsonwebtoken.Jwts;
@@ -27,6 +32,28 @@ public class JwtUtils {
         Date now = new Date();
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + jwtExpirationMs))
+                .signWith(key(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateToken(String username, String otp) throws JacksonException{
+        OtpJwtDto data = new OtpJwtDto();
+        data.setOtp(otp);
+        data.setUsername(username);
+        
+        Map<String, OtpJwtDto> jwt = new HashMap();
+        jwt.put("data", data);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String jacksonData = "";
+        jacksonData = objectMapper.writeValueAsString(jwt);
+
+        Date now = new Date();
+        return Jwts.builder()
+                .setSubject(jacksonData)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + jwtExpirationMs))
                 .signWith(key(), SignatureAlgorithm.HS256)

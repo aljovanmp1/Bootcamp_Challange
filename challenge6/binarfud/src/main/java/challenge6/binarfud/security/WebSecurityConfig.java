@@ -38,6 +38,8 @@ public class WebSecurityConfig {
                         .requestMatchers("api/auth/**").permitAll()
                         .requestMatchers("swagger-ui/**").permitAll()
                         .requestMatchers("api-docs/**").permitAll()
+                        .requestMatchers("aljovan/swagger-ui/**").permitAll()
+                        .requestMatchers("aljovan/api-docs/**").permitAll()
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
